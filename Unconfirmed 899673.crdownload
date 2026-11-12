@@ -1,0 +1,1022 @@
+"use strict";
+
+/* =========================================================
+   DATOS DE EJEMPLO
+   - retrato: foto principal (randomuser.me, retratos de ejemplo)
+   - kw: palabras clave para las demás fotos de la galería
+   - likeBack: si la persona te devuelve el corazón (match)
+   - demo: conversación de ejemplo (botón "Cargar chats de ejemplo")
+   ========================================================= */
+const perfiles = [
+  { id: 1, nombre: "Camila Rojas", edad: 24, ciudad: "Bogotá", distancia: 3, ocupacion: "Diseñadora gráfica",
+    retrato: "women/44", kw: ["concert", "travel", "cinema"],
+    busca: "Amigos para ir a conciertos y festivales.",
+    bio: "Amo los conciertos, los cafés escondidos y descubrir música nueva. Si tienes una playlist buena, hablamos.",
+    intereses: ["Música", "Cine", "Viajes"], emoji: ["🎧", "🎬", "✈️"], colores: ["#ff7a45", "#e0527a"], likeBack: true,
+    respuestas: ["¡Hola! Qué bueno que hiciéramos match 😄", "Voy a un concierto el mes que viene, ¿te animas?", "Te paso mi playlist, dime qué opinas 🎶"],
+    demo: [["ellos", "¡Hola! Vi que también te gusta la música 🎧"], ["yo", "¡Hola Camila! Sí, bastante. ¿Qué has estado escuchando?"], ["ellos", "Mucho indie y algo de salsa. ¿Y tú?"]], demoMin: 40, demoSinLeer: 1 },
+  { id: 2, nombre: "Andrés Gómez", edad: 28, ciudad: "Medellín", distancia: 8, ocupacion: "Desarrollador",
+    retrato: "men/32", kw: ["gaming", "laptop", "ramen"],
+    busca: "Equipo para jugar online y charlar de tecnología.",
+    bio: "Dev de día, gamer de noche. Busco gente para armar escuadra y, de vez en cuando, ir por ramen.",
+    intereses: ["Videojuegos", "Tecnología", "Anime"], emoji: ["🎮", "💻", "🍜"], colores: ["#3d8bff", "#2ee6a6"], likeBack: true,
+    respuestas: ["Ey, ¿qué tal? ¿A qué juegas últimamente?", "Jaja ese lo tengo también, armemos partida 🎮", "Esta noche estoy conectado, avísame."] },
+  { id: 3, nombre: "Valentina Pérez", edad: 22, ciudad: "Cali", distancia: 5, ocupacion: "Estudiante de danza",
+    retrato: "women/65", kw: ["dance", "festival", "camera"],
+    busca: "Compañeros de baile y planes de salsa.",
+    bio: "Salsera de corazón. Siempre hay un plan de baile, y si no lo hay, lo inventamos.",
+    intereses: ["Baile", "Música", "Fotografía"], emoji: ["💃", "🎶", "📷"], colores: ["#ffc145", "#e0527a"], likeBack: true,
+    respuestas: ["¡Hola! ¿Bailas salsa o solo escuchas? 😜", "El viernes hay una noche de salsa buenísima.", "Yo llevo la cámara y tú los pasos 📷"] },
+  { id: 4, nombre: "Santiago Ruiz", edad: 31, ciudad: "Bogotá", distancia: 6, ocupacion: "Ingeniero civil",
+    retrato: "men/75", kw: ["cycling", "hiking", "mountains"],
+    busca: "Parceros para ciclovía y caminatas.",
+    bio: "Domingos de ciclovía y montaña. Siempre hay un sendero nuevo que explorar.",
+    intereses: ["Ciclismo", "Senderismo", "Viajes"], emoji: ["🚴", "⛰️", "🌄"], colores: ["#2ee6a6", "#3d8bff"], likeBack: false,
+    respuestas: ["¡Qué más! ¿Montas bici?", "Este domingo salgo temprano, ¿te sumas?", "Te recomiendo una ruta increíble."] },
+  { id: 5, nombre: "Laura Martínez", edad: 26, ciudad: "Barranquilla", distancia: 4, ocupacion: "Psicóloga",
+    retrato: "women/12", kw: ["books", "popcorn", "cooking"],
+    busca: "Club de lectura y planes tranquilos.",
+    bio: "Libros, películas y cocina caribeña. Un buen plan es una peli y algo rico para comer.",
+    intereses: ["Lectura", "Cine", "Cocina"], emoji: ["📚", "🍿", "🍳"], colores: ["#b24cd6", "#ff7a45"], likeBack: true,
+    respuestas: ["¡Hola! ¿Qué estás leyendo ahora?", "Me encantó esa película, ¿la viste?", "Podríamos hacer un club de lectura 📖"],
+    demo: [["yo", "Hola Laura, ¿qué tal? Vi que te gusta leer 📚"], ["ellos", "¡Hola! Sí, estoy terminando una novela buenísima."], ["yo", "¿Me la recomiendas?"], ["ellos", "Claro, te la paso por aquí. Y tú, ¿lees algo?"]], demoMin: 200, demoSinLeer: 0 },
+  { id: 6, nombre: "Daniel Torres", edad: 20, ciudad: "Medellín", distancia: 2, ocupacion: "Estudiante",
+    retrato: "men/22", kw: ["soccer", "videogame", "guitar"],
+    busca: "Gente para jugar fútbol y videojuegos.",
+    bio: "Hincha del Nacional y FIFA en las noches. Siempre listo para una pichanga.",
+    intereses: ["Fútbol", "Videojuegos", "Música"], emoji: ["⚽", "🎮", "🎵"], colores: ["#2ee6a6", "#ffc145"], likeBack: false,
+    respuestas: ["¡Hola! ¿Juegas fútbol?", "Armamos partido el sábado.", "Jaja dale, yo llevo el balón."] },
+  { id: 7, nombre: "Sofía Herrera", edad: 29, ciudad: "Cartagena", distancia: 9, ocupacion: "Fotógrafa",
+    retrato: "women/26", kw: ["camera", "beach", "seafood"],
+    busca: "Compañeros de viaje y salidas fotográficas.",
+    bio: "Fotografío todo lo que encuentro en mis viajes. Mi mejor plan: atardecer, cámara y buena comida.",
+    intereses: ["Fotografía", "Viajes", "Cocina"], emoji: ["📷", "🌴", "🍤"], colores: ["#2ee6a6", "#ff7a45"], likeBack: true,
+    respuestas: ["¡Hola! Me alegra el match ☀️", "¿Cuál ha sido tu mejor viaje?", "Podemos hacer una salida de fotos por el centro."],
+    demo: [["ellos", "¡Hola! Qué bueno el match ☀️"], ["yo", "Igualmente 😄 ¿Dónde fue tu última sesión de fotos?"], ["ellos", "En el centro histórico de Cartagena, quedó genial."]], demoMin: 600, demoSinLeer: 0 },
+  { id: 8, nombre: "Mateo Castro", edad: 35, ciudad: "Bogotá", distancia: 12, ocupacion: "Profesor",
+    retrato: "men/45", kw: ["chess", "library", "coffee"],
+    busca: "Charlas largas y partidas de ajedrez.",
+    bio: "Ajedrez, libros y charlas largas con café. Prefiero pocos amigos pero buenos.",
+    intereses: ["Tecnología", "Lectura", "Ajedrez"], emoji: ["♟️", "📖", "☕"], colores: ["#5b6b8c", "#3d8bff"], likeBack: true,
+    respuestas: ["Hola, un gusto. ¿Juegas ajedrez?", "Te reto a una partida cuando quieras.", "Conozco un café perfecto para eso ☕"] },
+  { id: 9, nombre: "Isabella Vargas", edad: 23, ciudad: "Cali", distancia: 7, ocupacion: "Ilustradora",
+    retrato: "women/90", kw: ["drawing", "anime", "arcade"],
+    busca: "Gente para convenciones de anime y dibujo.",
+    bio: "Dibujo fanart y busco compañía para ir a convenciones. Si tienes un anime favorito, cuéntame.",
+    intereses: ["Anime", "Dibujo", "Videojuegos"], emoji: ["🎨", "🌸", "🕹️"], colores: ["#e0527a", "#b24cd6"], likeBack: true,
+    respuestas: ["¡Holaaa! ¿Cuál es tu anime favorito?", "Hay una convención pronto, ¡vamos!", "Te dibujo algo si me cuentas tu personaje favorito 🎨"] },
+  { id: 10, nombre: "Juan Pablo León", edad: 27, ciudad: "Medellín", distancia: 10, ocupacion: "Guía turístico",
+    retrato: "men/55", kw: ["trail", "landscape", "mountainbike"],
+    busca: "Compañeros de rutas y fotografía de naturaleza.",
+    bio: "Explorando los rincones de Antioquia en bici y a pie. La mejor vista siempre está al final de la subida.",
+    intereses: ["Senderismo", "Fotografía", "Ciclismo"], emoji: ["🥾", "📸", "🚵"], colores: ["#2ee6a6", "#3d8bff"], likeBack: false,
+    respuestas: ["¡Hola! ¿Te gusta caminar?", "Conozco una ruta preciosa.", "Llevamos cámara y listo 📸"] },
+  { id: 11, nombre: "María Fernanda", edad: 33, ciudad: "Barranquilla", distancia: 3, ocupacion: "Chef",
+    retrato: "women/33", kw: ["chef", "carnival", "trumpet"],
+    busca: "Amigos para cocinar, bailar y comer rico.",
+    bio: "Carnaval todo el año. Buen sazón y buena música, esa es mi receta.",
+    intereses: ["Baile", "Cocina", "Música"], emoji: ["🍲", "💃", "🎺"], colores: ["#ffc145", "#ff5d73"], likeBack: true,
+    respuestas: ["¡Hola! ¿Cocinas o solo comes? 😂", "Te preparo algo cuando nos veamos.", "En carnaval no hay quien me gane bailando."] },
+  { id: 12, nombre: "Nicolás Díaz", edad: 25, ciudad: "Cartagena", distancia: 5, ocupacion: "Community manager",
+    retrato: "men/68", kw: ["cinema", "stadium", "suitcase"],
+    busca: "Planes de cine, fútbol y viajes cortos.",
+    bio: "Cinéfilo y futbolero. Siempre listo para un plan improvisado.",
+    intereses: ["Fútbol", "Cine", "Viajes"], emoji: ["⚽", "🎥", "🧳"], colores: ["#3d8bff", "#ff7a45"], likeBack: true,
+    respuestas: ["¡Hola! ¿Qué tal todo?", "¿Viste el partido de anoche?", "Vamos a cine esta semana, yo escojo la peli 🎥"] }
+];
+
+const TODOS_INTERESES = [...new Set(perfiles.flatMap(p => p.intereses))].sort();
+const TODAS_CIUDADES = [...new Set(perfiles.map(p => p.ciudad))].sort();
+const RESPUESTAS_GENERICAS = ["Jaja qué bueno 😄", "Cuéntame más", "Me encantaría, ¿qué día te queda bien?", "Totalmente de acuerdo 🙌"];
+const EMOJIS = ["😀", "😂", "😍", "🥰", "😎", "🤝", "👍", "🙌", "🔥", "🎉", "❤️", "👋"];
+const UMBRAL = 110;               // píxeles de arrastre para decidir
+const SIZES_TARJETA = "(min-width: 960px) 440px, 100vw";
+const SIZES_DETALLE = "(min-width: 960px) 400px, (min-width: 600px) 460px, 100vw";
+
+/* =========================================================
+   ESTADO (se guarda en localStorage)
+   ========================================================= */
+const CLAVE = "amigo-demo-v3";
+
+function yoVacio() {
+  return { nombre: "", edad: "", ciudad: "", bio: "", intereses: ["Música", "Viajes", "Videojuegos", "Cine"], foto: null };
+}
+function filtrosVacios() {
+  return { ciudad: "", edadMin: "", edadMax: "", intereses: [] };
+}
+function estadoVacio() {
+  return { vistos: {}, matches: [], chats: {}, noLeidos: {}, filtros: filtrosVacios(), yo: yoVacio() };
+}
+
+function cargar() {
+  try {
+    const raw = localStorage.getItem(CLAVE);
+    if (raw) {
+      const d = JSON.parse(raw);
+      return {
+        vistos: d.vistos || {},
+        matches: d.matches || [],
+        chats: d.chats || {},
+        noLeidos: d.noLeidos || {},
+        filtros: Object.assign(filtrosVacios(), d.filtros || {}),
+        yo: Object.assign(yoVacio(), d.yo || {})
+      };
+    }
+  } catch (e) { /* sin almacenamiento disponible */ }
+  return estadoVacio();
+}
+function guardar() {
+  try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch (e) { /* ignorar */ }
+}
+
+let estado = cargar();
+let ultima = null;          // última acción (para deshacer)
+let animando = false;
+let vistaActual = "descubrir";
+let chatActual = null;
+let escribiendoId = null;
+let matchActual = null;
+
+const MQ_ANCHO = window.matchMedia("(min-width: 960px)");
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+const $ = id => document.getElementById(id);
+
+function el(tag, clase, texto) {
+  const e = document.createElement(tag);
+  if (clase) e.className = clase;
+  if (texto !== undefined) e.textContent = texto;
+  return e;
+}
+
+const perfilPorId = id => perfiles.find(p => p.id === id);
+const nFotos = p => p.kw.length + 1;
+
+function fmtHora(ts) {
+  const d = new Date(ts);
+  const hoy = new Date();
+  if (d.toDateString() === hoy.toDateString()) {
+    return d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+  }
+  return d.toLocaleDateString("es-CO", { day: "numeric", month: "short" });
+}
+
+function fondo(p, i) {
+  const [a, b] = p.colores;
+  const ang = [135, 210, 320, 60][i % 4];
+  return i % 2 === 1
+    ? `linear-gradient(${ang}deg, ${b}, ${a})`
+    : `linear-gradient(${ang}deg, ${a}, ${b})`;
+}
+
+/* ----- Fotos responsive -----
+   Foto 0: retrato (randomuser.me, 512 px).
+   Fotos 1..n: loremflickr con srcset (480/800/1200 px); si falla, picsum.
+   Si nada carga, se ve el degradado con el emoji. */
+function urlFoto(p, i, w) {
+  if (i === 0) return `https://randomuser.me/api/portraits/${p.retrato}.jpg`;
+  const h = Math.round(w * 1.25);
+  return `https://loremflickr.com/${w}/${h}/${p.kw[i - 1]}?lock=${p.id * 10 + i}`;
+}
+
+function crearFoto(p, i, sizes) {
+  const cont = el("div", "foto");
+  cont.style.background = fondo(p, i);
+  const emoji = el("span", "foto-emoji", p.emoji[i % p.emoji.length]);
+  const img = document.createElement("img");
+  img.alt = `Foto ${i + 1} de ${p.nombre}`;
+  img.decoding = "async";
+  img.draggable = false;
+  if (i > 0) {
+    img.sizes = sizes || "100vw";
+    img.srcset = [480, 800, 1200].map(w => `${urlFoto(p, i, w)} ${w}w`).join(", ");
+  }
+  img.addEventListener("load", () => cont.classList.add("cargada"));
+  img.addEventListener("error", () => {
+    if (i > 0 && !img.dataset.respaldo) {
+      img.dataset.respaldo = "1";
+      img.removeAttribute("srcset");
+      img.src = `https://picsum.photos/seed/amigo-${p.id}-${i}/800/1000`;
+    } else {
+      img.remove();
+    }
+  });
+  img.src = urlFoto(p, i, 800);
+  cont.append(emoji, img);
+  return cont;
+}
+
+function crearAvatar(p, clase) {
+  const a = el("div", "avatar " + (clase || ""));
+  a.appendChild(crearFoto(p, 0));
+  return a;
+}
+
+function inicialYo() {
+  return (estado.yo.nombre.trim()[0] || "Tú"[0]).toUpperCase();
+}
+
+function llenarAvatarYo(cont) {
+  cont.replaceChildren();
+  if (estado.yo.foto) {
+    const img = document.createElement("img");
+    img.src = estado.yo.foto;
+    img.alt = "Mi foto";
+    cont.appendChild(img);
+  } else {
+    cont.style.background = "linear-gradient(135deg, #ff7a45, #ffc145)";
+    cont.appendChild(el("span", "inicial", inicialYo()));
+  }
+}
+
+function crearAvatarYo(clase) {
+  const a = el("div", "avatar " + (clase || ""));
+  llenarAvatarYo(a);
+  return a;
+}
+
+function tagsHTML(p, max) {
+  const lista = max ? p.intereses.slice(0, max) : p.intereses;
+  return lista.map(i =>
+    `<span class="tag${estado.yo.intereses.includes(i) ? " en-comun" : ""}">${i}</span>`
+  ).join("");
+}
+
+function interesComun(p) {
+  return p.intereses.find(i => estado.yo.intereses.includes(i)) || p.intereses[0];
+}
+
+function pintarChips(cont, lista, activos, alClick) {
+  cont.replaceChildren();
+  lista.forEach(nombre => {
+    const b = el("button", "chip" + (activos.includes(nombre) ? " activo" : ""), nombre);
+    b.type = "button";
+    b.addEventListener("click", () => alClick(nombre));
+    cont.appendChild(b);
+  });
+}
+
+function pintarBarras(cont, total, activa) {
+  cont.replaceChildren();
+  for (let i = 0; i < total; i++) cont.appendChild(el("span", i === activa ? "on" : ""));
+}
+
+/* =========================================================
+   MODALES
+   ========================================================= */
+function abrirModal(m) { m.classList.remove("oculto"); }
+function cerrarModal(m) { m.classList.add("oculto"); }
+function hayModalAbierto() {
+  return document.querySelectorAll(".modal:not(.oculto), .overlay:not(.oculto)").length > 0;
+}
+
+/* =========================================================
+   FILTROS
+   ========================================================= */
+function hayFiltros() {
+  const f = estado.filtros;
+  return Boolean(f.ciudad || f.edadMin || f.edadMax || f.intereses.length);
+}
+
+function pasaFiltros(p) {
+  const f = estado.filtros;
+  if (f.ciudad && p.ciudad !== f.ciudad) return false;
+  if (f.edadMin && p.edad < Number(f.edadMin)) return false;
+  if (f.edadMax && p.edad > Number(f.edadMax)) return false;
+  if (f.intereses.length && !f.intereses.some(i => p.intereses.includes(i))) return false;
+  return true;
+}
+
+const cola = () => perfiles.filter(p => !estado.vistos[p.id] && pasaFiltros(p));
+
+function contarFiltros() {
+  const f = estado.filtros;
+  return (f.ciudad ? 1 : 0) + (f.edadMin || f.edadMax ? 1 : 0) + (f.intereses.length ? 1 : 0);
+}
+
+function renderFiltrosUI() {
+  $("f-ciudad").value = estado.filtros.ciudad;
+  $("f-min").value = estado.filtros.edadMin;
+  $("f-max").value = estado.filtros.edadMax;
+  pintarChips($("f-chips"), TODOS_INTERESES, estado.filtros.intereses, nombre => {
+    const lista = estado.filtros.intereses;
+    const k = lista.indexOf(nombre);
+    if (k >= 0) lista.splice(k, 1); else lista.push(nombre);
+    aplicarFiltros();
+  });
+}
+
+function aplicarFiltros() {
+  guardar();
+  renderFiltrosUI();
+  ultima = null;
+  renderDeck();
+}
+
+/* =========================================================
+   DECK DE TARJETAS
+   ========================================================= */
+function crearTarjeta(p, pos) {
+  const c = el("article", "tarjeta pos-" + pos);
+  c.dataset.id = p.id;
+  c.dataset.foto = "0";
+
+  const fotoBox = el("div", "tarjeta-foto");
+  fotoBox.appendChild(crearFoto(p, 0, SIZES_TARJETA));
+
+  const barras = el("div", "galeria-barras");
+  pintarBarras(barras, nFotos(p), 0);
+
+  const info = el("div", "tarjeta-info");
+  info.innerHTML = `
+    <h3>${p.nombre.split(" ")[0]}<span>${p.edad}</span></h3>
+    <div class="meta">${p.ocupacion} · ${p.ciudad} · a ${p.distancia} km</div>
+    <div class="tags">${tagsHTML(p, 3)}</div>
+  `;
+
+  const btnInfo = el("button", "info-card", "i");
+  btnInfo.type = "button";
+  btnInfo.setAttribute("aria-label", "Ver perfil completo");
+  btnInfo.addEventListener("pointerdown", e => e.stopPropagation());
+  btnInfo.addEventListener("click", () => abrirDetalleModal(p.id, "deck"));
+
+  c.append(
+    fotoBox, barras,
+    el("div", "sello sello-like", "LIKE"),
+    el("div", "sello sello-nope", "NOPE"),
+    info, btnInfo
+  );
+  return c;
+}
+
+function cambiarFotoTarjeta(card, delta) {
+  const p = perfilPorId(Number(card.dataset.id));
+  const actual = Number(card.dataset.foto);
+  const nueva = Math.max(0, Math.min(nFotos(p) - 1, actual + delta));
+  if (nueva === actual) return;
+  card.dataset.foto = String(nueva);
+  card.querySelector(".tarjeta-foto").replaceChildren(crearFoto(p, nueva, SIZES_TARJETA));
+  pintarBarras(card.querySelector(".galeria-barras"), nFotos(p), nueva);
+}
+
+function renderDeck() {
+  $("deck").replaceChildren();
+  const pendientes = cola();
+  const hay = pendientes.length > 0;
+
+  $("deck").classList.toggle("oculto", !hay);
+  $("deck-vacio").classList.toggle("oculto", hay);
+  $("acciones").classList.toggle("oculto", !hay);
+
+  const nc = contarFiltros();
+  $("filtros-count").textContent = nc;
+  $("filtros-count").classList.toggle("oculto", nc === 0);
+
+  if (!hay) {
+    const sinVer = perfiles.some(p => !estado.vistos[p.id]);
+    const porFiltros = sinVer && hayFiltros();
+    $("vacio-emoji").textContent = porFiltros ? "🔎" : "✨";
+    $("vacio-titulo").textContent = porFiltros ? "Nadie coincide con tus filtros" : "Ya viste a todos por ahora";
+    $("vacio-texto").textContent = porFiltros
+      ? "Prueba quitando algún filtro para ver más personas."
+      : "Vuelve más tarde o reinicia la demo para verlos de nuevo.";
+    $("btn-filtros-vacio").classList.toggle("oculto", !porFiltros);
+    $("btn-reiniciar-vacio").classList.toggle("oculto", porFiltros);
+  }
+
+  // De atrás hacia adelante: la de arriba queda al final
+  pendientes.slice(0, 3).reverse().forEach((p, idx, arr) => {
+    $("deck").appendChild(crearTarjeta(p, arr.length - 1 - idx));
+  });
+
+  const top = $("deck").lastElementChild;
+  if (top) activarArrastre(top);
+  $("btn-deshacer").disabled = !ultima;
+  renderLateralDetalle();
+}
+
+function activarArrastre(card) {
+  const sLike = card.querySelector(".sello-like");
+  const sNope = card.querySelector(".sello-nope");
+  let sx = 0, sy = 0, dx = 0, activo = false, movido = false;
+
+  card.addEventListener("pointerdown", e => {
+    if (animando) return;
+    activo = true;
+    movido = false;
+    dx = 0;
+    sx = e.clientX;
+    sy = e.clientY;
+    card.setPointerCapture(e.pointerId);
+    card.classList.add("arrastrando");
+  });
+
+  card.addEventListener("pointermove", e => {
+    if (!activo) return;
+    dx = e.clientX - sx;
+    const dy = e.clientY - sy;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) movido = true;
+    card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 18}deg)`;
+    const t = Math.min(1, Math.abs(dx) / UMBRAL);
+    sLike.style.opacity = dx > 0 ? t : 0;
+    sNope.style.opacity = dx < 0 ? t : 0;
+  });
+
+  const terminar = (e, cancelado) => {
+    if (!activo) return;
+    activo = false;
+    card.classList.remove("arrastrando");
+
+    if (!movido) {
+      // Toque simple: cambia de foto (izquierda = anterior, derecha = siguiente)
+      if (!cancelado) {
+        const r = card.getBoundingClientRect();
+        cambiarFotoTarjeta(card, e.clientX - r.left < r.width / 2 ? -1 : 1);
+      }
+    } else if (dx > UMBRAL) {
+      decidir("like");
+    } else if (dx < -UMBRAL) {
+      decidir("nope");
+    } else {
+      card.style.transform = "";
+      sLike.style.opacity = 0;
+      sNope.style.opacity = 0;
+    }
+    dx = 0;
+  };
+  card.addEventListener("pointerup", e => terminar(e, false));
+  card.addEventListener("pointercancel", e => terminar(e, true));
+}
+
+function decidir(accion) {
+  if (animando) return;
+  const top = $("deck").lastElementChild;
+  if (!top) return;
+
+  animando = true;
+  const id = Number(top.dataset.id);
+  const dir = accion === "like" ? 1 : -1;
+
+  top.classList.remove("arrastrando");
+  top.classList.add("saliendo");
+  top.querySelector(accion === "like" ? ".sello-like" : ".sello-nope").style.opacity = 1;
+  top.style.transform = `translate(${dir * 520}px, -40px) rotate(${dir * 28}deg)`;
+  top.style.opacity = "0";
+
+  setTimeout(() => {
+    procesar(id, accion);
+    animando = false;
+  }, 320);
+}
+
+function procesar(id, accion) {
+  estado.vistos[id] = accion;
+  const p = perfilPorId(id);
+  let hayMatch = false;
+
+  if (accion === "like" && p.likeBack) {
+    hayMatch = true;
+    if (!estado.matches.includes(id)) estado.matches.unshift(id);
+    estado.chats[id] = estado.chats[id] || [];
+  }
+
+  ultima = hayMatch ? null : { id, accion };
+  guardar();
+  renderDeck();
+  actualizarBadges();
+  if (hayMatch) mostrarMatch(p);
+}
+
+function deshacer() {
+  if (!ultima || animando) return;
+  delete estado.vistos[ultima.id];
+  ultima = null;
+  guardar();
+  renderDeck();
+}
+
+/* =========================================================
+   MATCH
+   ========================================================= */
+function mostrarMatch(p) {
+  matchActual = p.id;
+  $("match-texto").textContent = `Tú y ${p.nombre.split(" ")[0]} se gustaron.`;
+
+  const yo = $("match-yo");
+  llenarAvatarYo(yo);
+
+  const otro = $("match-otro");
+  otro.replaceChildren(crearFoto(p, 0));
+
+  abrirModal($("overlay-match"));
+}
+
+function cerrarMatch(irAlChat) {
+  cerrarModal($("overlay-match"));
+  const id = matchActual;
+  if (irAlChat) abrirChat(id);
+  else programarSaludo(id);
+}
+
+// Si el usuario sigue descubriendo, la persona escribe primero a los pocos segundos
+function programarSaludo(id) {
+  setTimeout(() => {
+    if ((estado.chats[id] || []).length > 0) return;
+    recibirMensaje(id, `¡Hola! Vi que también te gusta ${interesComun(perfilPorId(id))}. ¿Qué tal? 👋`);
+  }, 3500);
+}
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+function mostrarVista(nombre) {
+  vistaActual = nombre;
+  $("app").dataset.vista = nombre;
+  ["descubrir", "chats", "perfil"].forEach(v =>
+    $("vista-" + v).classList.toggle("activa", v === nombre)
+  );
+  document.querySelectorAll("[data-vista].menu-btn, [data-vista].nav-btn").forEach(b =>
+    b.classList.toggle("activo", b.dataset.vista === nombre)
+  );
+  if (nombre !== "chats") $("app").classList.remove("chat-abierto");
+
+  if (nombre === "descubrir") renderDeck();
+  if (nombre === "chats") { renderListaChats(); renderChat(); }
+  if (nombre === "perfil") renderPerfil();
+}
+
+function actualizarBadges() {
+  const total = Object.values(estado.noLeidos).reduce((a, b) => a + b, 0);
+  document.querySelectorAll("[data-badge]").forEach(b => {
+    b.textContent = total;
+    b.classList.toggle("oculto", total === 0);
+  });
+}
+
+/* =========================================================
+   LISTA DE CHATS
+   ========================================================= */
+function ultimoTs(id) {
+  const m = estado.chats[id] || [];
+  return m.length ? m[m.length - 1].ts : Date.now();
+}
+
+function renderListaChats() {
+  const lista = $("lista-chats");
+  lista.replaceChildren();
+  const ids = [...estado.matches].sort((a, b) => ultimoTs(b) - ultimoTs(a));
+
+  $("chats-vacio").classList.toggle("oculto", ids.length > 0);
+  $("chats-sub").textContent = ids.length
+    ? `${ids.length} ${ids.length === 1 ? "conversación" : "conversaciones"}`
+    : "";
+
+  ids.forEach(id => {
+    const p = perfilPorId(id);
+    const msgs = estado.chats[id] || [];
+    const ult = msgs[msgs.length - 1];
+    const sinLeer = estado.noLeidos[id] || 0;
+
+    const item = el("button", "chat-item" + (sinLeer ? " sin-leer" : "") + (id === chatActual ? " activo" : ""));
+    item.type = "button";
+
+    const wrap = el("div", "avatar-wrap");
+    wrap.appendChild(crearAvatar(p));
+    if (id % 2 === 1) wrap.appendChild(el("span", "online"));
+
+    const datos = el("div", "chat-datos");
+    const fila = el("div", "chat-fila");
+    fila.append(el("span", "chat-nombre", p.nombre), el("span", "chat-hora", ult ? fmtHora(ult.ts) : ""));
+    datos.append(fila, el("div", "chat-preview", ult
+      ? (ult.de === "yo" ? "Tú: " : "") + ult.texto
+      : "¡Es un match! Di hola 👋"));
+
+    item.append(wrap, datos);
+    if (sinLeer) item.appendChild(el("span", "nav-badge", sinLeer));
+    item.addEventListener("click", () => abrirChat(id));
+    lista.appendChild(item);
+  });
+}
+
+/* =========================================================
+   CONVERSACIÓN
+   ========================================================= */
+function abrirChat(id) {
+  chatActual = id;
+  estado.noLeidos[id] = 0;
+  guardar();
+  actualizarBadges();
+  if (vistaActual !== "chats") mostrarVista("chats");
+  $("app").classList.add("chat-abierto");
+  renderListaChats();
+  renderChat();
+}
+
+function cerrarChat() {
+  chatActual = null;
+  $("app").classList.remove("chat-abierto");
+  renderListaChats();
+  renderChat();
+}
+
+function renderChat() {
+  const hay = chatActual !== null;
+  $("chat-vacio").classList.toggle("oculto", hay);
+  $("chat-panel").classList.toggle("oculto", !hay);
+  if (!hay) return;
+
+  const p = perfilPorId(chatActual);
+
+  // Cabecera
+  const persona = $("chat-persona");
+  persona.replaceChildren();
+  const textos = el("div");
+  textos.append(el("strong", "", p.nombre));
+  const enLinea = chatActual % 2 === 1;
+  textos.append(el("small", enLinea ? "" : "off", enLinea ? "En línea" : "Activo hace un rato"));
+  persona.append(crearAvatar(p, "mini"), textos);
+
+  // Mensajes
+  const cont = $("mensajes");
+  cont.replaceChildren();
+  const msgs = estado.chats[chatActual] || [];
+
+  if (msgs.length === 0) {
+    cont.appendChild(el("div", "nota-chat", `Hiciste match con ${p.nombre.split(" ")[0]}. ¡Rompe el hielo!`));
+  }
+  msgs.forEach(m => {
+    const b = el("div", "burbuja " + m.de, m.texto);
+    b.appendChild(el("small", "", fmtHora(m.ts)));
+    cont.appendChild(b);
+  });
+
+  if (escribiendoId === chatActual) {
+    const t = el("div", "burbuja ellos escribiendo");
+    t.innerHTML = "<i></i><i></i><i></i>";
+    cont.appendChild(t);
+  }
+  cont.scrollTop = cont.scrollHeight;
+}
+
+function recibirMensaje(id, texto) {
+  estado.chats[id] = estado.chats[id] || [];
+  estado.chats[id].push({ de: "ellos", texto, ts: Date.now() });
+
+  const viendo = vistaActual === "chats" && chatActual === id;
+  if (!viendo) estado.noLeidos[id] = (estado.noLeidos[id] || 0) + 1;
+  guardar();
+  actualizarBadges();
+
+  if (vistaActual === "chats") {
+    renderListaChats();
+    if (viendo) renderChat();
+  }
+}
+
+function enviarMensaje(texto) {
+  const id = chatActual;
+  estado.chats[id].push({ de: "yo", texto, ts: Date.now() });
+  guardar();
+  renderListaChats();
+  renderChat();
+  responder(id);
+}
+
+function responder(id) {
+  if (escribiendoId === id) return;
+  const p = perfilPorId(id);
+  const previas = estado.chats[id].filter(m => m.de === "ellos").length;
+  const texto = p.respuestas[previas] || RESPUESTAS_GENERICAS[previas % RESPUESTAS_GENERICAS.length];
+
+  setTimeout(() => {
+    escribiendoId = id;
+    if (vistaActual === "chats" && chatActual === id) renderChat();
+    setTimeout(() => {
+      escribiendoId = null;
+      recibirMensaje(id, texto);
+    }, 1100 + Math.random() * 900);
+  }, 600);
+}
+
+function cargarEjemplos() {
+  perfiles.filter(p => p.demo).forEach(p => {
+    if (estado.matches.includes(p.id)) return;
+    estado.vistos[p.id] = "like";
+    estado.matches.push(p.id);
+    const base = Date.now() - p.demoMin * 60000;
+    estado.chats[p.id] = p.demo.map((m, i) => ({ de: m[0], texto: m[1], ts: base + i * 3 * 60000 }));
+    estado.noLeidos[p.id] = p.demoSinLeer || 0;
+  });
+  guardar();
+  actualizarBadges();
+  renderListaChats();
+  renderChat();
+}
+
+function pintarEmojis() {
+  const cont = $("emojis");
+  EMOJIS.forEach(e => {
+    const b = el("button", "", e);
+    b.type = "button";
+    b.addEventListener("click", () => {
+      $("chat-input").value += e;
+      $("chat-input").focus();
+    });
+    cont.appendChild(b);
+  });
+}
+
+/* =========================================================
+   DETALLE DE PERFIL (panel lateral en computador / modal en móvil)
+   ========================================================= */
+function construirDetalle(p, opciones) {
+  const cont = el("div", "detalle");
+  let idx = 0;
+
+  const gal = el("div", "galeria");
+  const fotoBox = el("div", "tarjeta-foto");
+  const barras = el("div", "galeria-barras");
+  const prev = el("button", "galeria-zona izq");
+  const next = el("button", "galeria-zona der");
+  prev.type = next.type = "button";
+  prev.setAttribute("aria-label", "Foto anterior");
+  next.setAttribute("aria-label", "Foto siguiente");
+
+  function pintar() {
+    fotoBox.replaceChildren(crearFoto(p, idx, SIZES_DETALLE));
+    pintarBarras(barras, nFotos(p), idx);
+  }
+  function mover(d) {
+    const n = Math.max(0, Math.min(nFotos(p) - 1, idx + d));
+    if (n !== idx) { idx = n; pintar(); }
+  }
+  prev.addEventListener("click", () => mover(-1));
+  next.addEventListener("click", () => mover(1));
+  gal.append(fotoBox, barras, prev, next);
+
+  if (opciones.alCerrar) {
+    const x = el("button", "modal-cerrar", "✕");
+    x.type = "button";
+    x.setAttribute("aria-label", "Cerrar");
+    x.addEventListener("click", opciones.alCerrar);
+    gal.appendChild(x);
+  }
+  pintar();
+
+  const cuerpo = el("div", "detalle-cuerpo");
+  cuerpo.innerHTML = `
+    <h2>${p.nombre}<span>${p.edad}</span></h2>
+    <div class="meta">${p.ocupacion}</div>
+    <div class="meta">${p.ciudad} · a ${p.distancia} km de ti</div>
+    <h4>Sobre mí</h4><p>${p.bio}</p>
+    <h4>Busco</h4><p>${p.busca}</p>
+    <h4>Intereses</h4><div class="tags">${tagsHTML(p)}</div>
+  `;
+  cont.append(gal, cuerpo);
+
+  if (opciones.ctx === "deck") {
+    const acc = el("div", "detalle-acciones");
+    const no = el("button", "accion nope", "✕");
+    const si = el("button", "accion like", "♥");
+    no.type = si.type = "button";
+    no.setAttribute("aria-label", "No me interesa");
+    si.setAttribute("aria-label", "Me gusta");
+    no.addEventListener("click", () => { cerrarModal($("modal-detalle")); decidir("nope"); });
+    si.addEventListener("click", () => { cerrarModal($("modal-detalle")); decidir("like"); });
+    acc.append(no, si);
+    cont.appendChild(acc);
+  } else if (opciones.ctx === "match") {
+    const acc = el("div", "detalle-acciones");
+    const b = el("button", "btn btn-primario ancho", "Enviar mensaje");
+    b.type = "button";
+    b.addEventListener("click", () => { cerrarModal($("modal-detalle")); abrirChat(p.id); });
+    acc.appendChild(b);
+    cont.appendChild(acc);
+  }
+
+  cont._mover = mover;
+  return cont;
+}
+
+function abrirDetalleModal(id, ctx) {
+  const p = perfilPorId(id);
+  const hoja = $("detalle-hoja");
+  hoja.replaceChildren(construirDetalle(p, { ctx, alCerrar: () => cerrarModal($("modal-detalle")) }));
+  abrirModal($("modal-detalle"));
+}
+
+function renderLateralDetalle() {
+  const cont = $("lateral-detalle");
+  cont.replaceChildren();
+  if (!MQ_ANCHO.matches) return;
+  const top = cola()[0];
+  if (top) {
+    cont.appendChild(construirDetalle(top, { ctx: "aside" }));
+  } else {
+    const v = el("div", "chat-vacio");
+    v.append(el("div", "vacio-emoji", "🙌"), el("p", "", "No hay más perfiles para mostrar."));
+    cont.appendChild(v);
+  }
+}
+
+/* =========================================================
+   MI PERFIL
+   ========================================================= */
+function renderYoMini() {
+  const b = $("yo-mini");
+  b.replaceChildren();
+  const texto = el("div");
+  texto.append(el("strong", "", estado.yo.nombre.trim() || "Tú"), el("small", "", "Editar mi perfil"));
+  b.append(crearAvatarYo("mini"), texto);
+}
+
+function renderPreviewYo() {
+  const y = estado.yo;
+  const cont = $("yo-preview");
+  cont.replaceChildren();
+
+  const card = el("div", "preview-card");
+  const foto = el("div", "foto cargada");
+  if (y.foto) {
+    const img = document.createElement("img");
+    img.src = y.foto;
+    img.alt = "Mi foto";
+    foto.appendChild(img);
+  } else {
+    foto.style.background = "linear-gradient(135deg, #ff7a45, #ffc145)";
+    foto.appendChild(el("span", "foto-emoji", "🙂"));
+    foto.classList.remove("cargada");
+  }
+  const info = el("div", "tarjeta-info");
+  const nombre = (y.nombre.trim() || "Tu nombre");
+  info.innerHTML = `<h3></h3><div class="meta"></div><p></p><div class="tags"></div>`;
+  info.querySelector("h3").textContent = nombre;
+  if (y.edad) {
+    const s = el("span", "", String(y.edad));
+    info.querySelector("h3").appendChild(s);
+  }
+  info.querySelector(".meta").textContent = y.ciudad || "Tu ciudad";
+  info.querySelector("p").textContent = y.bio || "Aquí aparecerá tu descripción.";
+  y.intereses.forEach(i => info.querySelector(".tags").appendChild(el("span", "tag", i)));
+
+  card.append(foto, info);
+  cont.appendChild(card);
+}
+
+function renderPerfil() {
+  const y = estado.yo;
+  $("yo-nombre").value = y.nombre;
+  $("yo-edad").value = y.edad;
+  $("yo-ciudad").value = y.ciudad;
+  $("yo-bio").value = y.bio;
+  const box = $("yo-foto-box");
+  box.replaceChildren(crearAvatarYo("grande"));
+  pintarChips($("yo-chips"), TODOS_INTERESES, y.intereses, nombre => {
+    const k = y.intereses.indexOf(nombre);
+    if (k >= 0) y.intereses.splice(k, 1);
+    else if (y.intereses.length < 6) y.intereses.push(nombre);
+    guardarYo();
+    renderPerfil();
+  });
+  renderPreviewYo();
+}
+
+function guardarYo() {
+  guardar();
+  renderYoMini();
+  renderPreviewYo();
+}
+
+function redimensionar(archivo, max, cb) {
+  const lector = new FileReader();
+  lector.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, max / Math.max(im.width, im.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(im.width * s);
+      c.height = Math.round(im.height * s);
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      cb(c.toDataURL("image/jpeg", 0.82));
+    };
+    im.src = lector.result;
+  };
+  lector.readAsDataURL(archivo);
+}
+
+/* =========================================================
+   REINICIAR
+   ========================================================= */
+function reiniciar() {
+  if (!confirm("¿Reiniciar la demo? Se borrarán tus matches, mensajes y filtros (tu perfil se conserva).")) return;
+  const yo = estado.yo;
+  estado = estadoVacio();
+  estado.yo = yo;
+  ultima = null;
+  chatActual = null;
+  escribiendoId = null;
+  guardar();
+  actualizarBadges();
+  renderFiltrosUI();
+  mostrarVista("descubrir");
+}
+
+/* =========================================================
+   EVENTOS
+   ========================================================= */
+$("btn-like").addEventListener("click", () => decidir("like"));
+$("btn-nope").addEventListener("click", () => decidir("nope"));
+$("btn-deshacer").addEventListener("click", deshacer);
+$("btn-reiniciar-vacio").addEventListener("click", reiniciar);
+document.querySelectorAll("[data-reiniciar]").forEach(b => b.addEventListener("click", reiniciar));
+
+document.querySelectorAll(".menu-btn[data-vista], .nav-btn[data-vista]").forEach(b =>
+  b.addEventListener("click", () => mostrarVista(b.dataset.vista))
+);
+$("yo-mini").addEventListener("click", () => mostrarVista("perfil"));
+
+// Filtros
+$("btn-filtros").addEventListener("click", () => { renderFiltrosUI(); abrirModal($("modal-filtros")); });
+$("btn-filtros-vacio").addEventListener("click", () => { renderFiltrosUI(); abrirModal($("modal-filtros")); });
+$("filtros-cerrar").addEventListener("click", () => cerrarModal($("modal-filtros")));
+$("f-listo").addEventListener("click", () => cerrarModal($("modal-filtros")));
+$("f-limpiar").addEventListener("click", () => { estado.filtros = filtrosVacios(); aplicarFiltros(); });
+$("f-ciudad").addEventListener("change", e => { estado.filtros.ciudad = e.target.value; aplicarFiltros(); });
+$("f-min").addEventListener("input", e => { estado.filtros.edadMin = e.target.value; guardar(); ultima = null; renderDeck(); });
+$("f-max").addEventListener("input", e => { estado.filtros.edadMax = e.target.value; guardar(); ultima = null; renderDeck(); });
+
+// Chats
+$("btn-ir-descubrir").addEventListener("click", () => mostrarVista("descubrir"));
+$("btn-ejemplos").addEventListener("click", cargarEjemplos);
+$("chat-atras").addEventListener("click", cerrarChat);
+$("chat-persona").addEventListener("click", () => { if (chatActual) abrirDetalleModal(chatActual, "match"); });
+$("btn-emoji").addEventListener("click", () => $("emojis").classList.toggle("oculto"));
+$("chat-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const texto = $("chat-input").value.trim();
+  if (!texto || chatActual === null) return;
+  $("chat-input").value = "";
+  $("emojis").classList.add("oculto");
+  enviarMensaje(texto);
+});
+
+// Mi perfil
+$("yo-nombre").addEventListener("input", e => { estado.yo.nombre = e.target.value; guardarYo(); });
+$("yo-edad").addEventListener("input", e => { estado.yo.edad = e.target.value; guardarYo(); });
+$("yo-ciudad").addEventListener("input", e => { estado.yo.ciudad = e.target.value; guardarYo(); });
+$("yo-bio").addEventListener("input", e => { estado.yo.bio = e.target.value; guardarYo(); });
+$("yo-archivo").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  redimensionar(f, 520, url => {
+    estado.yo.foto = url;
+    guardarYo();
+    renderPerfil();
+  });
+});
+
+// Modales
+$("modal-detalle").addEventListener("click", e => { if (e.target === $("modal-detalle")) cerrarModal($("modal-detalle")); });
+$("modal-filtros").addEventListener("click", e => { if (e.target === $("modal-filtros")) cerrarModal($("modal-filtros")); });
+$("match-mensaje").addEventListener("click", () => cerrarMatch(true));
+$("match-seguir").addEventListener("click", () => cerrarMatch(false));
+
+// El panel lateral de detalle depende del ancho de pantalla
+MQ_ANCHO.addEventListener("change", () => { if (vistaActual === "descubrir") renderDeck(); });
+
+// Teclado
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    if (!$("overlay-match").classList.contains("oculto")) cerrarMatch(false);
+    else if (!$("modal-filtros").classList.contains("oculto")) cerrarModal($("modal-filtros"));
+    else if (!$("modal-detalle").classList.contains("oculto")) cerrarModal($("modal-detalle"));
+    return;
+  }
+  const escribiendo = ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName);
+  if (escribiendo || hayModalAbierto() || vistaActual !== "descubrir") return;
+  if (e.key === "ArrowRight") decidir("like");
+  if (e.key === "ArrowLeft") decidir("nope");
+});
+
+/* =========================================================
+   ARRANQUE
+   ========================================================= */
+function iniciar() {
+  TODAS_CIUDADES.forEach(c => {
+    const o = el("option", "", c);
+    o.value = c;
+    $("f-ciudad").appendChild(o);
+    const d = document.createElement("option");
+    d.value = c;
+    $("lista-ciudades").appendChild(d);
+  });
+  pintarEmojis();
+  renderYoMini();
+  renderFiltrosUI();
+  actualizarBadges();
+  mostrarVista("descubrir");
+}
+
+iniciar();

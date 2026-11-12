@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AmiGo - Desliza y conecta</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app" data-vista="descubrir">
+
+    <!-- Barra lateral (solo computador) -->
+    <aside class="sidebar">
+      <div class="logo">Ami<span>Go</span></div>
+      <button class="yo-mini" id="yo-mini" type="button" aria-label="Editar mi perfil"></button>
+      <nav class="menu">
+        <button class="menu-btn activo" data-vista="descubrir" type="button"><span class="ico">🔥</span>Descubrir</button>
+        <button class="menu-btn" data-vista="chats" type="button"><span class="ico">💬</span>Chats <span class="nav-badge oculto" data-badge>0</span></button>
+        <button class="menu-btn" data-vista="perfil" type="button"><span class="ico">👤</span>Mi perfil</button>
+      </nav>
+      <button class="menu-btn sec" data-reiniciar type="button"><span class="ico">⟲</span>Reiniciar demo</button>
+    </aside>
+
+    <!-- Barra superior (solo celular) -->
+    <header class="topbar">
+      <div class="logo">Ami<span>Go</span></div>
+      <button class="icon-btn" data-reiniciar type="button" title="Reiniciar demo" aria-label="Reiniciar demo">⟲</button>
+    </header>
+
+    <main class="centro">
+
+      <!-- DESCUBRIR -->
+      <section class="vista activa" id="vista-descubrir">
+        <div class="descubrir-barra">
+          <h2>Descubrir</h2>
+          <button class="chip-btn" id="btn-filtros" type="button">
+            Filtros <span class="nav-badge oculto" id="filtros-count">0</span>
+          </button>
+        </div>
+
+        <div class="deck-zona">
+          <div class="deck" id="deck"></div>
+
+          <div class="deck-vacio oculto" id="deck-vacio">
+            <div class="vacio-emoji" id="vacio-emoji">✨</div>
+            <h3 id="vacio-titulo"></h3>
+            <p id="vacio-texto"></p>
+            <button class="btn btn-primario" id="btn-reiniciar-vacio" type="button">Volver a empezar</button>
+            <button class="btn btn-primario oculto" id="btn-filtros-vacio" type="button">Cambiar filtros</button>
+          </div>
+
+          <div class="acciones" id="acciones">
+            <button class="accion pequena" id="btn-deshacer" type="button" title="Deshacer" aria-label="Deshacer">↶</button>
+            <button class="accion nope" id="btn-nope" type="button" title="No me interesa" aria-label="No me interesa">✕</button>
+            <button class="accion like" id="btn-like" type="button" title="Me gusta" aria-label="Me gusta">♥</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHATS (lista) -->
+      <section class="vista" id="vista-chats">
+        <div class="vista-scroll">
+          <h2 class="titulo-vista">Chats</h2>
+          <p class="sub" id="chats-sub"></p>
+          <div class="lista-chats" id="lista-chats"></div>
+          <div class="vacio-texto oculto" id="chats-vacio">
+            <div class="vacio-emoji">💬</div>
+            <p>Aún no tienes chats.<br>Dale corazón a alguien en Descubrir para empezar a hablar.</p>
+            <div class="vacio-botones">
+              <button class="btn btn-primario" id="btn-ir-descubrir" type="button">Ir a Descubrir</button>
+              <button class="btn btn-secundario" id="btn-ejemplos" type="button">Cargar chats de ejemplo</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MI PERFIL -->
+      <section class="vista" id="vista-perfil">
+        <div class="vista-scroll">
+          <h2 class="titulo-vista">Mi perfil</h2>
+          <p class="sub">Así te ven las demás personas. Se guarda automáticamente.</p>
+          <div class="perfil-grid">
+            <form class="perfil-form" id="form-perfil" autocomplete="off">
+              <div class="foto-subir">
+                <div id="yo-foto-box"></div>
+                <label class="btn btn-secundario">
+                  Cambiar foto
+                  <input type="file" id="yo-archivo" accept="image/*" hidden>
+                </label>
+              </div>
+              <label class="campo">Nombre
+                <input type="text" id="yo-nombre" maxlength="30" placeholder="Tu nombre">
+              </label>
+              <div class="fila-2">
+                <label class="campo">Edad
+                  <input type="number" id="yo-edad" min="18" max="99" placeholder="18+">
+                </label>
+                <label class="campo">Ciudad
+                  <input type="text" id="yo-ciudad" list="lista-ciudades" maxlength="30" placeholder="Tu ciudad">
+                  <datalist id="lista-ciudades"></datalist>
+                </label>
+              </div>
+              <label class="campo">Sobre mí
+                <textarea id="yo-bio" rows="3" maxlength="160" placeholder="Cuéntales algo sobre ti"></textarea>
+              </label>
+              <div class="campo">
+                <span class="etq">Intereses (hasta 6)</span>
+                <div class="chips" id="yo-chips"></div>
+              </div>
+            </form>
+            <div class="perfil-preview">
+              <span class="etq">Vista previa</span>
+              <div id="yo-preview"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Panel lateral (detalle del perfil / conversación) -->
+    <aside class="lateral" id="lateral">
+      <div class="lateral-detalle" id="lateral-detalle"></div>
+
+      <div class="lateral-chat">
+        <div class="chat-vacio" id="chat-vacio">
+          <div class="vacio-emoji">💬</div>
+          <p>Selecciona un chat para ver la conversación.</p>
+        </div>
+
+        <div class="chat-panel oculto" id="chat-panel">
+          <div class="chat-cab">
+            <button class="icon-btn chat-atras" id="chat-atras" type="button" aria-label="Volver">‹</button>
+            <button class="chat-persona" id="chat-persona" type="button" aria-label="Ver perfil"></button>
+          </div>
+          <div class="mensajes" id="mensajes"></div>
+          <div class="emojis oculto" id="emojis"></div>
+          <form class="chat-form" id="chat-form" autocomplete="off">
+            <button class="icon-btn" id="btn-emoji" type="button" aria-label="Emojis">😊</button>
+            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." maxlength="300">
+            <button class="btn btn-primario" type="submit">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Navegación inferior (solo celular) -->
+    <nav class="nav-movil">
+      <button class="nav-btn activo" data-vista="descubrir" type="button"><span class="ico">🔥</span>Descubrir</button>
+      <button class="nav-btn" data-vista="chats" type="button"><span class="ico">💬</span>Chats <span class="nav-badge oculto" data-badge>0</span></button>
+      <button class="nav-btn" data-vista="perfil" type="button"><span class="ico">👤</span>Perfil</button>
+    </nav>
+  </div>
+
+  <!-- MODAL: perfil completo -->
+  <div class="modal oculto" id="modal-detalle" role="dialog" aria-modal="true" aria-label="Perfil">
+    <div class="modal-hoja" id="detalle-hoja"></div>
+  </div>
+
+  <!-- MODAL: filtros -->
+  <div class="modal oculto" id="modal-filtros" role="dialog" aria-modal="true" aria-label="Filtros">
+    <div class="modal-hoja hoja-form">
+      <div class="hoja-cab">
+        <h3>Filtros</h3>
+        <button class="icon-btn" id="filtros-cerrar" type="button" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="hoja-cuerpo">
+        <label class="campo">Ciudad
+          <select id="f-ciudad"><option value="">Todas</option></select>
+        </label>
+        <div class="campo">
+          <span class="etq">Edad</span>
+          <div class="rango">
+            <input type="number" id="f-min" min="18" max="99" placeholder="Mín">
+            <span>–</span>
+            <input type="number" id="f-max" min="18" max="99" placeholder="Máx">
+          </div>
+        </div>
+        <div class="campo">
+          <span class="etq">Intereses (cualquiera de ellos)</span>
+          <div class="chips" id="f-chips"></div>
+        </div>
+      </div>
+      <div class="hoja-pie">
+        <button class="btn btn-secundario" id="f-limpiar" type="button">Limpiar</button>
+        <button class="btn btn-primario" id="f-listo" type="button">Ver perfiles</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ES UN MATCH -->
+  <div class="overlay oculto" id="overlay-match">
+    <div class="match-caja">
+      <div class="match-titulo">¡Es un match!</div>
+      <p id="match-texto"></p>
+      <div class="match-avatares">
+        <div class="avatar-grande" id="match-yo"></div>
+        <div class="avatar-grande" id="match-otro"></div>
+      </div>
+      <button class="btn btn-primario ancho" id="match-mensaje" type="button">Enviar mensaje</button>
+      <button class="btn btn-secundario ancho" id="match-seguir" type="button">Seguir descubriendo</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
